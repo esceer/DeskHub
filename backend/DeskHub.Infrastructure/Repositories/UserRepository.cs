@@ -1,4 +1,5 @@
-using DeskHub.Domain.Interfaces;
+
+using DeskHub.Application.Interfaces.Persistence;
 
 namespace DeskHub.Infrastructure.Repositories;
 

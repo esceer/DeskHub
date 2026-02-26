@@ -1,0 +1,14 @@
+﻿using DeskHub.Application.Interfaces.Services;
+using DeskHub.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace DeskHub.Application.Configuration;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddScoped<IDeskService, DeskService>();
+        return services;
+    }
+}

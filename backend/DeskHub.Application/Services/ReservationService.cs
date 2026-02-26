@@ -1,4 +1,4 @@
-using DeskHub.Application.Interfaces;
+using DeskHub.Application.Interfaces.Services;
 
 namespace DeskHub.Application.Services;
 
