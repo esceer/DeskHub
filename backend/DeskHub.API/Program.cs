@@ -1,3 +1,4 @@
+using DeskHub.API.Exceptions;
 using DeskHub.Application;
 using DeskHub.Infrastructure;
 using Microsoft.OpenApi;
@@ -39,11 +40,16 @@ builder.Services.AddOpenApi(options =>
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 #endregion
 
 var app = builder.Build();
 
 #region Middleware
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

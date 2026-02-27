@@ -1,7 +1,6 @@
 using DeskHub.API.DTOs.Requests;
-using DeskHub.API.DTOs.Responses;
+using DeskHub.API.Mappings;
 using DeskHub.Application.Interfaces.Services;
-using DeskHub.Backend.Api.Filters;
 using DeskHub.Domain.Entities;
 using DeskHub.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -20,20 +19,13 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] Guid? userId)
     {
-        var reservations = await _reservationService.GetAllAsync();
+        var reservations = userId.HasValue
+            ? await _reservationService.GetByUserIdAsync(userId.Value)
+            : await _reservationService.GetAllAsync();
 
-        var response = reservations.Select(r => new ReservationResponse
-        {
-            Id = r.Id,
-            UserId = r.UserId,
-            DeskId = r.DeskId,
-            Start = r.Time.Start,
-            End = r.Time.End,
-            Status = r.Status
-        });
-        return Ok(response);
+        return Ok(reservations.Select(ReservationMappings.ToResponse));
     }
 
     [HttpGet("{id}")]
@@ -44,16 +36,7 @@ public class ReservationsController : ControllerBase
         if (reservation is null)
             return NotFound();
 
-        var response = new ReservationResponse
-        {
-            Id = reservation.Id,
-            UserId = reservation.UserId,
-            DeskId = reservation.DeskId,
-            Start = reservation.Time.Start,
-            End = reservation.Time.End,
-            Status = reservation.Status
-        };
-        return Ok(response);
+        return Ok(reservation.ToResponse());
     }
 
     [HttpPost]
@@ -68,20 +51,10 @@ public class ReservationsController : ControllerBase
 
         var createdReservation = await _reservationService.CreateAsync(reservation);
 
-        var response = new ReservationResponse
-        {
-            Id = createdReservation.Id,
-            UserId = createdReservation.UserId,
-            DeskId = createdReservation.DeskId,
-            Start = createdReservation.Time.Start,
-            End = createdReservation.Time.End,
-            Status = createdReservation.Status
-        };
-        return CreatedAtAction(nameof(Post), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(Post), new { id = createdReservation.Id }, createdReservation.ToResponse());
     }
 
     [HttpPut("{id}")]
-    [IdExistsFilter]
     public async Task<IActionResult> Put(Guid id, [FromBody] UpdateReservationRequest dto)
     {
         var reservation = new Reservation
@@ -95,16 +68,17 @@ public class ReservationsController : ControllerBase
         if (updated is null)
             return NotFound();
 
-        var response = new ReservationResponse
-        {
-            Id = updated.Id,
-            UserId = updated.UserId,
-            DeskId = updated.DeskId,
-            Start = updated.Time.Start,
-            End = updated.Time.End,
-            Status = updated.Status
-        };
-        return Ok(response);
+        return Ok(updated.ToResponse());
+    }
+
+    [HttpPatch("{id}/cancel")]
+    public async Task<IActionResult> Cancel(Guid id)
+    {
+        var updated = await _reservationService.CancelAsync(id);
+        if (updated is null)
+            return NotFound();
+
+        return Ok(updated.ToResponse());
     }
 
     [HttpDelete("{id}")]

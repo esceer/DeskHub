@@ -8,10 +8,7 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
 
-    public UserService(IUserRepository repository)
-    {
-        _userRepository = repository;
-    }
+    public UserService(IUserRepository repository) => _userRepository = repository;
 
     public Task<IEnumerable<User>> GetAllAsync() => _userRepository.GetAllAsync();
 

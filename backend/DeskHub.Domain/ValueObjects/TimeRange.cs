@@ -4,11 +4,11 @@ namespace DeskHub.Domain.ValueObjects;
 
 public record TimeRange
 {
-    public DateTimeOffset Start { get; }
-    public DateTimeOffset End { get; }
+    public DateTime Start { get; }
+    public DateTime End { get; }
 
     [JsonConstructor]
-    public TimeRange(DateTimeOffset start, DateTimeOffset end)
+    public TimeRange(DateTime start, DateTime end)
     {
         if (end <= start)
             throw new ArgumentException("End must be after Start");

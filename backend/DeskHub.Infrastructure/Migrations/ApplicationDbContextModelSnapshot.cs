@@ -136,11 +136,11 @@ namespace DeskHub.Infrastructure.Migrations
                             b1.Property<Guid>("ReservationId")
                                 .HasColumnType("TEXT");
 
-                            b1.Property<DateTimeOffset>("End")
+                            b1.Property<DateTime>("End")
                                 .HasColumnType("TEXT")
                                 .HasColumnName("End");
 
-                            b1.Property<DateTimeOffset>("Start")
+                            b1.Property<DateTime>("Start")
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Start");
 

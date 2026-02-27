@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeskHub.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260227003222_Init")]
+    [Migration("20260227212918_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -139,11 +139,11 @@ namespace DeskHub.Infrastructure.Migrations
                             b1.Property<Guid>("ReservationId")
                                 .HasColumnType("TEXT");
 
-                            b1.Property<DateTimeOffset>("End")
+                            b1.Property<DateTime>("End")
                                 .HasColumnType("TEXT")
                                 .HasColumnName("End");
 
-                            b1.Property<DateTimeOffset>("Start")
+                            b1.Property<DateTime>("Start")
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Start");
 

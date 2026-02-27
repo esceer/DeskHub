@@ -1,6 +1,8 @@
 
 using DeskHub.Application.Interfaces.Persistence;
 using DeskHub.Domain.Entities;
+using DeskHub.Domain.Enums;
+using DeskHub.Domain.ValueObjects;
 using DeskHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,20 @@ public class DeskRepository : IDeskRepository
     {
         return await _db.Desks
             .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Desk>> GetAvailableAsync(TimeRange range)
+    {
+        return await _db.Desks
+            .AsNoTracking()
+            .Where(d =>
+                d.IsActive &&
+                !_db.Reservations.Any(r =>
+                    r.DeskId == d.Id &&
+                    r.Status == ReservationStatus.Active &&
+                    r.Time.Start < range.End &&
+                    r.Time.End > range.Start))
             .ToListAsync();
     }
 

@@ -47,8 +47,8 @@ namespace DeskHub.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     DeskId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Start = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    End = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
+                    Start = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    End = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

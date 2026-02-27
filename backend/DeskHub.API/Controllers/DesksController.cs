@@ -1,8 +1,8 @@
 using DeskHub.API.DTOs.Requests;
-using DeskHub.API.DTOs.Responses;
+using DeskHub.API.Mappings;
 using DeskHub.Application.Interfaces.Services;
-using DeskHub.Backend.Api.Filters;
 using DeskHub.Domain.Entities;
+using DeskHub.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DeskHub.Backend.Api.Controllers;
@@ -12,6 +12,7 @@ namespace DeskHub.Backend.Api.Controllers;
 public class DesksController : ControllerBase
 {
     private readonly IDeskService _deskService;
+
 
     public DesksController(IDeskService service)
     {
@@ -23,13 +24,7 @@ public class DesksController : ControllerBase
     {
         var desks = await _deskService.GetAllAsync();
 
-        var response = desks.Select(d => new DeskResponse
-        {
-            Id = d.Id,
-            Code = d.Code,
-            IsActive = d.IsActive
-        });
-        return Ok(response);
+        return Ok(desks.Select(DeskMappings.ToResponse));
     }
 
     [HttpGet("{id}")]
@@ -40,13 +35,20 @@ public class DesksController : ControllerBase
         if (desk is null)
             return NotFound();
 
-        var response = new DeskResponse
-        {
-            Id = desk.Id,
-            Code = desk.Code,
-            IsActive = desk.IsActive
-        };
-        return Ok(response);
+        return Ok(desk.ToResponse());
+    }
+
+    [HttpGet("available")]
+    public async Task<IActionResult> GetAvailable([FromQuery] TimeRangeRequest dto)
+    {
+        if (dto.Start >= dto.End)
+            return BadRequest("Invalid time range.");
+
+        var range = new TimeRange(dto.Start!.Value, dto.End!.Value);
+
+        var desks = await _deskService.GetAvailableAsync(range);
+
+        return Ok(desks.Select(DeskMappings.ToResponse));
     }
 
     [HttpPost]
@@ -60,17 +62,10 @@ public class DesksController : ControllerBase
 
         var createdDesk = await _deskService.CreateAsync(desk);
 
-        var response = new DeskResponse
-        {
-            Id = createdDesk.Id,
-            Code = createdDesk.Code,
-            IsActive = createdDesk.IsActive
-        };
-        return CreatedAtAction(nameof(Post), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(Post), new { id = createdDesk.Id }, createdDesk.ToResponse());
     }
 
     [HttpPut("{id}")]
-    [IdExistsFilter]
     public async Task<IActionResult> Put(Guid id, [FromBody] UpdateDeskRequest dto)
     {
         var desk = new Desk
@@ -84,13 +79,7 @@ public class DesksController : ControllerBase
         if (updatedDesk == null)
             return NotFound();
 
-        var response = new DeskResponse
-        {
-            Id = updatedDesk.Id,
-            Code = updatedDesk.Code,
-            IsActive = updatedDesk.IsActive
-        };
-        return Ok(response);
+        return Ok(updatedDesk.ToResponse());
     }
 
     [HttpDelete("{id}")]

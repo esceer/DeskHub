@@ -24,6 +24,16 @@ public class ReservationRepository : IReservationRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Reservation>> GetByUserIdAsync(Guid userId)
+    {
+        return await _db.Reservations
+            .AsNoTracking()
+            .Where(r => r.UserId == userId)
+            .Include(r => r.User)
+            .Include(r => r.Desk)
+            .ToListAsync();
+    }
+
     public async Task<Reservation?> GetByIdAsync(Guid id)
     {
         return await _db.Reservations
@@ -37,7 +47,10 @@ public class ReservationRepository : IReservationRepository
     {
         _db.Reservations.Add(reservation);
         await _db.SaveChangesAsync();
-        return reservation;
+        return await _db.Reservations
+            .Include(x => x.User)
+            .Include(x => x.Desk)
+            .FirstAsync(x => x.Id == reservation.Id);
     }
 
     // Tracked update due to owned type TimeRange

@@ -1,7 +1,6 @@
 using DeskHub.API.DTOs.Requests;
-using DeskHub.API.DTOs.Responses;
+using DeskHub.API.Mappings;
 using DeskHub.Application.Interfaces.Services;
-using DeskHub.Backend.Api.Filters;
 using DeskHub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,14 +22,7 @@ public class UsersController : ControllerBase
     {
         var users = await _userService.GetAllAsync();
 
-        var response = users.Select(u => new UserResponse
-        {
-            Id = u.Id,
-            Name = u.Name,
-            Email = u.Email,
-            Role = u.Role
-        });
-        return Ok(response);
+        return Ok(users.Select(UserMappings.ToResponse));
     }
 
     [HttpGet("{id}")]
@@ -41,14 +33,7 @@ public class UsersController : ControllerBase
         if (user is null)
             return NotFound();
 
-        var response = new UserResponse
-        {
-            Id = id,
-            Name = user.Name,
-            Email = user.Email,
-            Role = user.Role
-        };
-        return Ok(user);
+        return Ok(user.ToResponse());
     }
 
     [HttpPost]
@@ -63,18 +48,10 @@ public class UsersController : ControllerBase
 
         var createdUser = await _userService.CreateAsync(user);
 
-        var response = new UserResponse
-        {
-            Id = createdUser.Id,
-            Name = createdUser.Name,
-            Email = createdUser.Email,
-            Role = createdUser.Role
-        };
-        return CreatedAtAction(nameof(Post), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(Post), new { id = createdUser.Id }, createdUser.ToResponse());
     }
 
     [HttpPut("{id}")]
-    [IdExistsFilter]
     public async Task<IActionResult> Put(Guid id, [FromBody] UpdateUserRequest dto)
     {
         var user = new User
@@ -89,14 +66,7 @@ public class UsersController : ControllerBase
         if (updatedUser == null)
             return NotFound();
 
-        var response = new UserResponse
-        {
-            Id = updatedUser.Id,
-            Name = updatedUser.Name,
-            Email = updatedUser.Email,
-            Role = updatedUser.Role
-        };
-        return Ok(response);
+        return Ok(updatedUser.ToResponse());
     }
 
     [HttpDelete("{id}")]
