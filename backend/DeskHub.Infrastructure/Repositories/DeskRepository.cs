@@ -2,6 +2,7 @@
 using DeskHub.Application.Interfaces.Persistence;
 using DeskHub.Domain.Entities;
 using DeskHub.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DeskHub.Infrastructure.Repositories;
 
@@ -14,40 +15,45 @@ public class DeskRepository : IDeskRepository
         _db = db;
     }
 
-    public Desk Create(Desk desk)
+    public async Task<Desk> CreateAsync(Desk desk)
     {
-        var createdDesk = _db.Desks.Add(desk);
-        _db.SaveChanges();
+        _db.Desks.Add(desk);
+        await _db.SaveChangesAsync();
         return desk;
     }
 
-    public void DeleteById(Guid id)
+    public async Task DeleteByIdAsync(Guid id)
     {
-        _db.Desks.Remove(new Desk { Id = id });
-        _db.SaveChanges();
+        await _db.Desks
+            .Where(d => d.Id == id)
+            .ExecuteDeleteAsync();
     }
 
-    public IEnumerable<Desk> GetAll()
+    public async Task<IEnumerable<Desk>> GetAllAsync()
     {
-        return [.. _db.Desks];
+        return await _db.Desks
+            .AsNoTracking()
+            .ToListAsync();
     }
 
-    public Desk? GetById(Guid id)
+    public async Task<Desk?> GetByIdAsync(Guid id)
     {
-        return _db.Desks.Find(id);
+        return await _db.Desks
+            .AsNoTracking()
+            .FirstOrDefaultAsync(d => d.Id == id);
     }
 
-    public Desk Update(Desk desk)
+    public async Task<Desk?> UpdateAsync(Desk desk)
     {
-        var existingDesk = GetById(desk.Id);
-        if (existingDesk == null)
-        {
-            throw new InvalidOperationException($"Desk with ID {desk.Id} does not exist.");
-        }
+        var affected = await _db.Desks
+            .Where(d => d.Id == desk.Id)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(d => d.Code, desk.Code)
+                .SetProperty(d => d.IsActive, desk.IsActive));
 
-        existingDesk.IsActive = desk.IsActive;
-        _db.SaveChanges();
+        if (affected == 0)
+            return null;
 
-        return existingDesk;
+        return await GetByIdAsync(desk.Id);
     }
 }

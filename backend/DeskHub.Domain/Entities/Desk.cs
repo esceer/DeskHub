@@ -2,7 +2,7 @@ namespace DeskHub.Domain.Entities;
 
 public class Desk
 {
-    public required Guid Id { get; init; }
-    public string Code { get; init; }
-    public bool IsActive { get; set; }
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public required string Code { get; set; }
+    public bool IsActive { get; set; } = true;
 }

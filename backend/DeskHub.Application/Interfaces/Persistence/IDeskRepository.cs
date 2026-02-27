@@ -4,9 +4,9 @@ namespace DeskHub.Application.Interfaces.Persistence;
 
 public interface IDeskRepository
 {
-    IEnumerable<Desk> GetAll();
-    Desk? GetById(Guid id);
-    Desk Create(Desk desk);
-    Desk Update(Desk desk);
-    void DeleteById(Guid id);
+    Task<IEnumerable<Desk>> GetAllAsync();
+    Task<Desk?> GetByIdAsync(Guid id);
+    Task<Desk> CreateAsync(Desk desk);
+    Task<Desk?> UpdateAsync(Desk desk);
+    Task DeleteByIdAsync(Guid id);
 }

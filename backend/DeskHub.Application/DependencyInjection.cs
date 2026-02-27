@@ -2,7 +2,7 @@
 using DeskHub.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DeskHub.Application.Configuration;
+namespace DeskHub.Application;
 
 public static class DependencyInjection
 {

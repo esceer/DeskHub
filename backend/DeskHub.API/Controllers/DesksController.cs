@@ -17,36 +17,36 @@ public class DesksController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        var desks = _deskService.GetAll();
+        var desks = await _deskService.GetAllAsync();
         return Ok(desks);
     }
 
     [HttpGet("{id}")]
-    public IActionResult Get(Guid id)
+    public async Task<IActionResult> Get(Guid id)
     {
-        var desk = _deskService.GetById(id);
+        var desk = await _deskService.GetByIdAsync(id);
         return Ok(desk);
     }
 
     [HttpPost]
-    public IActionResult Post([FromBody] Desk desk)
+    public async Task<IActionResult> Post([FromBody] Desk desk)
     {
-        var createdDesk = _deskService.Create(desk);
+        var createdDesk = await _deskService.CreateAsync(desk);
         return CreatedAtAction(nameof(Post), new { id = createdDesk.Id }, createdDesk);
     }
 
     [HttpPut("{id}")]
     [IdExistsFilter]
-    public IActionResult Put(Guid id, [FromBody] Desk desk)
+    public async Task<IActionResult> Put(Guid id, [FromBody] Desk desk)
     {
         if (desk.Id != id)
         {
             return BadRequest("ID in URL and body must match.");
         }
 
-        var updatedDesk = _deskService.Update(desk);
+        var updatedDesk = await _deskService.UpdateAsync(desk);
         if (updatedDesk == null)
         {
             return NotFound();
@@ -55,9 +55,9 @@ public class DesksController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        _deskService.DeleteById(id);
+        await _deskService.DeleteByIdAsync(id);
         return NoContent();
     }
 }

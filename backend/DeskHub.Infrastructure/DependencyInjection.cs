@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DeskHub.Application.Configuration;
+namespace DeskHub.Infrastructure;
 
 public static class DependencyInjection
 {

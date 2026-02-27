@@ -13,28 +13,13 @@ public class DeskService : IDeskService
         _deskRepository = deskRepository;
     }
 
-    public Desk Create(Desk desk)
-    {
-        return _deskRepository.Create(desk);
-    }
+    public Task<IEnumerable<Desk>> GetAllAsync() => _deskRepository.GetAllAsync();
 
-    public void DeleteById(Guid id)
-    {
-        _deskRepository.DeleteById(id);
-    }
+    public Task<Desk?> GetByIdAsync(Guid id) => _deskRepository.GetByIdAsync(id);
 
-    public IEnumerable<Desk> GetAll()
-    {
-        return _deskRepository.GetAll();
-    }
+    public Task<Desk> CreateAsync(Desk desk) => _deskRepository.CreateAsync(desk);
 
-    public Desk? GetById(Guid id)
-    {
-        return _deskRepository.GetById(id);
-    }
+    public Task<Desk?> UpdateAsync(Desk desk) => _deskRepository.UpdateAsync(desk);
 
-    public Desk Update(Desk desk)
-    {
-        return _deskRepository.Update(desk);
-    }
+    public Task DeleteByIdAsync(Guid id) => _deskRepository.DeleteByIdAsync(id);
 }

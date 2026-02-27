@@ -5,10 +5,11 @@ namespace DeskHub.Domain.Entities;
 
 public class Reservation
 {
-    public required Guid Id { get; init; }
+    public Guid Id { get; init; } = Guid.NewGuid();
     public required Guid UserId { get; init; }
     public required Guid DeskId { get; init; }
-
-    public required TimeRange Time { get; init; }
-    public required ReservationStatus Status { get; set; }
+    public User User { get; private set; } = null!;
+    public Desk Desk { get; private set; } = null!;
+    public required TimeRange Time { get; set; }
+    public ReservationStatus Status { get; set; } = ReservationStatus.Active;
 }

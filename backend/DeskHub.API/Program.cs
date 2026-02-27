@@ -1,4 +1,5 @@
-using DeskHub.Application.Configuration;
+using DeskHub.Application;
+using DeskHub.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
