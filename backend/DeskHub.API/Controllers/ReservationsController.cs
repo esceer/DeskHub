@@ -33,7 +33,7 @@ public class ReservationsController : ControllerBase
             End = r.Time.End,
             Status = r.Status
         });
-        return Ok(reservations);
+        return Ok(response);
     }
 
     [HttpGet("{id}")]
@@ -53,7 +53,7 @@ public class ReservationsController : ControllerBase
             End = reservation.Time.End,
             Status = reservation.Status
         };
-        return Ok(reservation);
+        return Ok(response);
     }
 
     [HttpPost]
@@ -68,16 +68,16 @@ public class ReservationsController : ControllerBase
 
         var createdReservation = await _reservationService.CreateAsync(reservation);
 
-        var reponse = new ReservationResponse
+        var response = new ReservationResponse
         {
-            Id = reservation.Id,
-            UserId = reservation.UserId,
-            DeskId = reservation.DeskId,
-            Start = reservation.Time.Start,
-            End = reservation.Time.End,
-            Status = reservation.Status
+            Id = createdReservation.Id,
+            UserId = createdReservation.UserId,
+            DeskId = createdReservation.DeskId,
+            Start = createdReservation.Time.Start,
+            End = createdReservation.Time.End,
+            Status = createdReservation.Status
         };
-        return CreatedAtAction(nameof(Post), new { id = createdReservation.Id }, createdReservation);
+        return CreatedAtAction(nameof(Post), new { id = response.Id }, response);
     }
 
     [HttpPut("{id}")]
@@ -90,9 +90,6 @@ public class ReservationsController : ControllerBase
             Time = new TimeRange(dto.Start, dto.End),
             Status = dto.Status
         };
-
-        if (reservation.Id != id)
-            return BadRequest("ID in URL and body must match.");
 
         var updated = await _reservationService.UpdateAsync(reservation);
         if (updated is null)
