@@ -8,9 +8,9 @@ public class DeskService : IDeskService
 {
     private readonly IDeskRepository _deskRepository;
 
-    public DeskService(IDeskRepository deskRepository)
+    public DeskService(IDeskRepository repository)
     {
-        _deskRepository = deskRepository;
+        _deskRepository = repository;
     }
 
     public Task<IEnumerable<Desk>> GetAllAsync() => _deskRepository.GetAllAsync();

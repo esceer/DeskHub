@@ -15,20 +15,6 @@ public class DeskRepository : IDeskRepository
         _db = db;
     }
 
-    public async Task<Desk> CreateAsync(Desk desk)
-    {
-        _db.Desks.Add(desk);
-        await _db.SaveChangesAsync();
-        return desk;
-    }
-
-    public async Task DeleteByIdAsync(Guid id)
-    {
-        await _db.Desks
-            .Where(d => d.Id == id)
-            .ExecuteDeleteAsync();
-    }
-
     public async Task<IEnumerable<Desk>> GetAllAsync()
     {
         return await _db.Desks
@@ -43,6 +29,13 @@ public class DeskRepository : IDeskRepository
             .FirstOrDefaultAsync(d => d.Id == id);
     }
 
+    public async Task<Desk> CreateAsync(Desk desk)
+    {
+        _db.Desks.Add(desk);
+        await _db.SaveChangesAsync();
+        return desk;
+    }
+
     public async Task<Desk?> UpdateAsync(Desk desk)
     {
         var affected = await _db.Desks
@@ -55,5 +48,12 @@ public class DeskRepository : IDeskRepository
             return null;
 
         return await GetByIdAsync(desk.Id);
+    }
+
+    public async Task DeleteByIdAsync(Guid id)
+    {
+        await _db.Desks
+            .Where(d => d.Id == id)
+            .ExecuteDeleteAsync();
     }
 }

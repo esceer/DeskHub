@@ -56,7 +56,6 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         entity.HasIndex(r => r.UserId);
         entity.HasIndex(r => r.DeskId);
-
         entity.HasIndex(r => new { r.DeskId, r.Status });
 
         #endregion
